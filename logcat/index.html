@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Logcat Parser</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="container p-3 my-3 bg-dark text-white">    
+  <h1 class="text-center">Logcat Parser</h1>
+  <p class="text-center">By: Faiz NFI</p>
+  <br>
+  <br>
+  <div class="form-group">
+        <label for="comment">Insert Log Here:</label>
+        <textarea class="form-control" rows="5" name="log" id="log" ></textarea> <br>
+        <label for="comment">Or simply upload txt file here</label> <br>
+        <input type='file' accept='text/plain' onchange='openFile(event)'><br>
+  </div>
+  <input id="boom" type="submit" name="boom" value="BOOM" class="col-sm-12 btn btn-outline-light text-light"/>
+  <input id="reset" type="submit" name="reset" value="Reset" class="col-sm-12 btn btn-outline-light text-light"/>
+  <div name="result" id="result" class="row">
+        <div name="result1" id="result1" class="col-sm-5">
+
+        </div>
+        <div name="result2" id="result2" class="col-sm-5">
+        
+        </div>
+  </div>
+</div>
+</body>
+
+<script type="text/javascript">
+var openFile = function(event) {
+    var input = event.target;
+
+    var reader = new FileReader();
+    reader.onload = function(){
+      var text = reader.result;
+      var arr = text.split("\n");
+      console.log(arr[1]);
+    };
+    reader.readAsText(input.files[0]);
+  };
+$("#reset").hide();
+
+
+    $(document).ready(function(){
+            $("#boom").click(function(){
+                var string = $("#log").val();
+                console.log(string);
+                var an = "<br>App Name : "+string.match(/(?<=an=).*?(?=,)/);
+                var av = "<br>App Version : "+string.match(/(?<=av=).*?(?=,)/);
+                var cd = "<br>Screen Name : "+string.match(/(?<=cd=).*?(?=,)/);
+                var cd1 = "<br>User ID (cd1): "+string.match(/(?<=cd1=).*?(?=,)/);
+                var cid = "<br>Client ID : "+string.match(/(?<=cid=).*?(?=,)/);
+                var ec = "<br>Event Category : "+string.match(/(?<=ec=).*?(?=,)/);
+                var ea = "<br>Event Action : "+string.match(/(?<=ea=).*?(?=,)/);
+                var el = "<br>Event Label : "+string.match(/(?<=el=).*?(?=,)/);
+                var tid = "<br>Google Analytics : "+string.match(/(?<=tid=).*?(?=,)/);
+                var gtm = "<br>Google Tag Manager : "+string.match(/(?<=gtm=).*?(?=,)/);
+
+                $("#boom").hide();
+                $("#reset").show();
+                $("#result1").append(an,av,cid,tid,gtm);
+                $("#result2").append(cd,ec,ea,el,cd1);
+
+            });
+            $("#reset").click(function(){
+                $("#boom").show();
+                $("#reset").hide();
+                $("#result1").empty();
+                $("#result2").empty();
+            });
+        
+    });
+    
+</script>
+</html>
+
