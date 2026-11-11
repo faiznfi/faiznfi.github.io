@@ -1,4 +1,4 @@
-import { ResumeData, Project } from "./types";
+import type { ResumeData, Project } from "./types";
 
 export const projectsData: Project[] = [
   {
@@ -30,7 +30,6 @@ export const projectsData: Project[] = [
 export const resumeData: ResumeData = {
   name: "Faiz Insani",
   title: "Data Enthusiast",
-  summary: "",
   email: "faiznfi@gmail.com",
   github: "github.com/faiznfi",
   linkedin: "linkedin.com/in/faiznfi",
