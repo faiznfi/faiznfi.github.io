@@ -10,7 +10,7 @@ I'm a huge advocate of **vibe coding**—using intuition and rapid prototyping t
 
 ## Analytics
 
-This site is instrumented with Google Tag Manager + GA4. See [docs/tracking-plan.md](docs/tracking-plan.md) for the event specification and [docs/gtm-ga4-setup.md](docs/gtm-ga4-setup.md) for the GTM/GA4 configuration.
+This site is instrumented with Google Tag Manager + GA4. See [docs/tracking-plan.md](docs/tracking-plan.md) for the event specification.
 
 ## License
 
