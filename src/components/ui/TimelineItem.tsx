@@ -1,15 +1,21 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
 import { fadeLeft } from "../../lib/motion";
+import { useInViewOnce } from "../../hooks/useInViewOnce";
 
 interface TimelineItemProps {
   index: number;
   children: ReactNode;
+  /** Called once when the item scrolls into view (used for analytics). */
+  onView?: () => void;
 }
 
-export function TimelineItem({ index, children }: TimelineItemProps) {
+export function TimelineItem({ index, children, onView }: TimelineItemProps) {
+  const ref = useInViewOnce<HTMLLIElement>(() => onView?.());
+
   return (
     <motion.li
+      ref={ref}
       {...fadeLeft(index * 0.1)}
       className="relative pl-6 border-l border-white/10 hover:border-cyan-500/50 transition-colors"
     >

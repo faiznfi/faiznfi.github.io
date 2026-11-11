@@ -4,6 +4,8 @@ import { BarChart3, MapPin, Sparkles, ArrowRight } from "lucide-react";
 import { projectsData } from "../data";
 import type { ProjectIcon } from "../types";
 import { fadeScale } from "../lib/motion";
+import { track, trackProjectListView, trackProjectSelect } from "../lib/analytics";
+import { useInViewOnce } from "../hooks/useInViewOnce";
 import { SectionHeader } from "./ui/SectionHeader";
 import { TagList } from "./ui/Tag";
 
@@ -14,12 +16,15 @@ const iconMap: Record<ProjectIcon, ReactNode> = {
 };
 
 export function Projects() {
+  const sectionRef = useInViewOnce<HTMLElement>(() => track("section_view", { section_name: "projects" }));
+  const listRef = useInViewOnce<HTMLUListElement>(() => trackProjectListView(projectsData));
+
   return (
-    <section id="projects" aria-labelledby="projects-title" className="py-24 relative z-10 bg-[#0A0A0C] scroll-mt-16">
+    <section ref={sectionRef} id="projects" aria-labelledby="projects-title" className="py-24 relative z-10 bg-[#0A0A0C] scroll-mt-16">
       <div className="container mx-auto px-6 max-w-6xl">
         <SectionHeader id="projects-title" label="VIBE_CODING_LAB" title={["Intelligence", "Modules"]} />
 
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-1 bg-white/5 p-1" role="list">
+        <ul ref={listRef} className="grid grid-cols-1 md:grid-cols-2 gap-1 bg-white/5 p-1" role="list">
           {projectsData.map((project, index) => (
             <motion.li
               key={project.id}
@@ -52,6 +57,7 @@ export function Projects() {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackProjectSelect(project, index)}
                   aria-label={`Open ${project.title} (opens in a new tab)`}
                   className="mt-auto inline-flex items-center gap-2 text-xs font-mono text-white underline underline-offset-8 decoration-cyan-500/50 hover:text-cyan-400 transition-colors group/link uppercase tracking-widest"
                 >

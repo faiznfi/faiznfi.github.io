@@ -3,6 +3,7 @@ import { Navigation } from "./components/Navigation";
 import { Hero } from "./components/Hero";
 import { Projects } from "./components/Projects";
 import { Resume } from "./components/Resume";
+import { track } from "./lib/analytics";
 
 export default function App() {
   return (
@@ -24,7 +25,10 @@ export default function App() {
             <span>VIBE: <span className="text-white/70">FUTURISM_CORE</span></span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 items-center">
-            <a href="#top" className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
+            <a
+              href="#top"
+              onClick={() => track("navigation_click", { link_text: "faiznfi.github.io", link_url: "#top", click_location: "footer" })}
+              className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
               faiznfi.github.io
             </a>
             <span className="text-white/70">© {new Date().getFullYear()}</span>
