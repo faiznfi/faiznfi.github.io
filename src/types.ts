@@ -1,10 +1,12 @@
+export type ProjectIcon = "bar-chart" | "map-pin" | "sparkles";
+
 export interface Project {
   id: string;
   title: string;
   description: string;
   link: string;
   tags: string[];
-  icon: string;
+  icon: ProjectIcon;
 }
 
 export interface Experience {
@@ -26,7 +28,8 @@ export interface Education {
 export interface ResumeData {
   name: string;
   title: string;
-  summary: string;
+  /** Optional short bio; rendered in the resume section when non-empty. */
+  summary?: string;
   email: string;
   github: string;
   linkedin: string;
