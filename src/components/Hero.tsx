@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Terminal, Code2 } from "lucide-react";
 import { resumeData } from "../data";
+import { track } from "../lib/analytics";
 
 // The hero is above the fold, so it animates on mount instead of on scroll.
 const enter = (delay = 0) => ({
@@ -71,6 +72,7 @@ export function Hero() {
           <motion.div {...enter(0.4)} className="flex flex-wrap items-center justify-center gap-6">
             <a
               href="#projects"
+              onClick={() => track("cta_click", { link_text: "Explore Projects", link_url: "#projects", click_location: "hero" })}
               className="px-8 py-4 bg-white text-black font-bold text-xs tracking-widest uppercase hover:bg-cyan-400 transition-colors flex items-center gap-2 group"
             >
               <Terminal aria-hidden="true" className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -78,6 +80,7 @@ export function Hero() {
             </a>
             <a
               href="#resume"
+              onClick={() => track("cta_click", { link_text: "View Resume", link_url: "#resume", click_location: "hero" })}
               className="px-8 py-4 border border-white/20 text-white font-bold text-xs tracking-widest uppercase hover:bg-white/10 hover:border-cyan-500/50 transition-colors flex items-center gap-2 group"
             >
               <Code2 aria-hidden="true" className="w-4 h-4 group-hover:scale-110 transition-transform text-cyan-500" />

@@ -8,6 +8,10 @@ I'm a huge advocate of **vibe coding**—using intuition and rapid prototyping t
 
 ---
 
+## Analytics
+
+This site is instrumented with Google Tag Manager + GA4. See [docs/tracking-plan.md](docs/tracking-plan.md) for the event specification.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

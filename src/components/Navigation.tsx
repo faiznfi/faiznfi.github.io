@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { resumeData } from "../data";
+import { track } from "../lib/analytics";
 
 const navLinks = [
   { name: "Home", href: "#top" },
@@ -48,7 +49,12 @@ export function Navigation() {
         }`}
       >
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <a href="#top" className="flex items-center gap-3 text-white group" aria-label="faiznfi.systems — back to top">
+          <a
+            href="#top"
+            className="flex items-center gap-3 text-white group"
+            aria-label="faiznfi.systems — back to top"
+            onClick={() => track("navigation_click", { link_text: "Logo", link_url: "#top", click_location: "header" })}
+          >
             <div aria-hidden="true" className="w-8 h-8 bg-cyan-500 rounded-sm rotate-45 flex items-center justify-center">
               <span className="-rotate-45 font-bold text-[#0A0A0C] text-sm">F</span>
             </div>
@@ -58,7 +64,12 @@ export function Navigation() {
           {/* Desktop Nav */}
           <nav aria-label="Main" className="hidden md:flex items-center gap-8 text-xs font-mono tracking-widest text-white/60">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href} className="hover:text-cyan-400 transition-colors uppercase">
+              <a
+                key={link.name}
+                href={link.href}
+                className="hover:text-cyan-400 transition-colors uppercase"
+                onClick={() => track("navigation_click", { link_text: link.name, link_url: link.href, click_location: "header" })}
+              >
                 <span aria-hidden="true">// </span>
                 {link.name}
               </a>
@@ -67,6 +78,7 @@ export function Navigation() {
 
           <a
             href={`mailto:${resumeData.email}`}
+            onClick={() => track("generate_lead", { method: "email", click_location: "header" })}
             className="hidden md:inline-block px-4 py-2 border border-cyan-500/30 text-cyan-400 text-[11px] font-mono hover:bg-cyan-500/10 transition-colors uppercase"
           >
             CONTACT_ME
@@ -76,7 +88,10 @@ export function Navigation() {
           <button
             type="button"
             className="md:hidden p-2 -mr-2 text-white/60 hover:text-cyan-400"
-            onClick={() => setIsMobileMenuOpen(true)}
+            onClick={() => {
+              setIsMobileMenuOpen(true);
+              track("menu_open", { click_location: "header" });
+            }}
             aria-label="Open menu"
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
@@ -116,7 +131,10 @@ export function Navigation() {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={closeMenu}
+                  onClick={() => {
+                    track("navigation_click", { link_text: link.name, link_url: link.href, click_location: "mobile_menu" });
+                    closeMenu();
+                  }}
                   className="text-xl uppercase text-white/60 hover:text-cyan-400 transition-colors"
                 >
                   <span aria-hidden="true">// </span>
@@ -126,7 +144,10 @@ export function Navigation() {
               <a
                 href={`mailto:${resumeData.email}`}
                 className="mt-8 px-6 py-3 border border-cyan-500/30 text-cyan-400 text-xs font-mono hover:bg-cyan-500/10 transition-colors uppercase"
-                onClick={closeMenu}
+                onClick={() => {
+                  track("generate_lead", { method: "email", click_location: "mobile_menu" });
+                  closeMenu();
+                }}
               >
                 CONTACT_ME
               </a>

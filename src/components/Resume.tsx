@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { Briefcase, GraduationCap, Code, Mail, Github, Linkedin } from "lucide-react";
 import { resumeData } from "../data";
 import { fadeUp } from "../lib/motion";
+import { track } from "../lib/analytics";
+import { useInViewOnce } from "../hooks/useInViewOnce";
 import { SectionHeader } from "./ui/SectionHeader";
 import { TagList } from "./ui/Tag";
 import { TimelineHeading, TimelineItem } from "./ui/TimelineItem";
@@ -12,12 +14,14 @@ interface ContactLinkProps {
   icon: ReactNode;
   label: string;
   external?: boolean;
+  onClick: () => void;
 }
 
-function ContactLink({ href, icon, label, external = false }: ContactLinkProps) {
+function ContactLink({ href, icon, label, external = false, onClick }: ContactLinkProps) {
   return (
     <a
       href={href}
+      onClick={onClick}
       {...(external && { target: "_blank", rel: "noopener noreferrer" })}
       className="flex items-center gap-4 text-white/70 hover:text-cyan-400 transition-colors group"
     >
@@ -34,9 +38,12 @@ function ContactLink({ href, icon, label, external = false }: ContactLinkProps) 
 
 export function Resume() {
   const { summary, experiences, education, skills, email, github, linkedin } = resumeData;
+  const sectionRef = useInViewOnce<HTMLElement>(() => track("section_view", { section_name: "resume" }));
+  const githubUrl = `https://${github}`;
+  const linkedinUrl = `https://${linkedin}`;
 
   return (
-    <section id="resume" aria-labelledby="resume-title" className="py-24 relative z-10 bg-[#0F0F12] scroll-mt-16">
+    <section ref={sectionRef} id="resume" aria-labelledby="resume-title" className="py-24 relative z-10 bg-[#0F0F12] scroll-mt-16">
       <div className="container mx-auto px-6 max-w-6xl">
         <SectionHeader id="resume-title" label="PROFESSIONAL_RECORD" title={["Interactive", "Resume"]} />
 
@@ -53,7 +60,11 @@ export function Resume() {
               <TimelineHeading icon={<Briefcase className="w-4 h-4" />}>Experience</TimelineHeading>
               <ol className="space-y-12">
                 {experiences.map((exp, index) => (
-                  <TimelineItem key={exp.id} index={index}>
+                  <TimelineItem
+                    key={exp.id}
+                    index={index}
+                    onView={() => track("experience_view", { company: exp.company, role: exp.role, position: index + 1 })}
+                  >
                     <div className="mb-4">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
                         <h4 className="text-xl font-bold text-[#E0E0E6] uppercase tracking-tight">{exp.role}</h4>
@@ -108,9 +119,26 @@ export function Resume() {
             <motion.div {...fadeUp(0.1)} className="bg-[#0A0A0C] p-8 flex-1">
               <h3 className="text-[11px] font-mono text-white/60 uppercase tracking-[0.2em] mb-6">Terminal / Comm</h3>
               <div className="space-y-6">
-                <ContactLink href={`mailto:${email}`} icon={<Mail className="w-4 h-4" />} label={email} />
-                <ContactLink href={`https://${github}`} icon={<Github className="w-4 h-4" />} label={github} external />
-                <ContactLink href={`https://${linkedin}`} icon={<Linkedin className="w-4 h-4" />} label={linkedin} external />
+                <ContactLink
+                  href={`mailto:${email}`}
+                  icon={<Mail className="w-4 h-4" />}
+                  label={email}
+                  onClick={() => track("generate_lead", { method: "email", click_location: "resume" })}
+                />
+                <ContactLink
+                  href={githubUrl}
+                  icon={<Github className="w-4 h-4" />}
+                  label={github}
+                  external
+                  onClick={() => track("social_click", { platform: "github", link_url: githubUrl, click_location: "resume" })}
+                />
+                <ContactLink
+                  href={linkedinUrl}
+                  icon={<Linkedin className="w-4 h-4" />}
+                  label={linkedin}
+                  external
+                  onClick={() => track("social_click", { platform: "linkedin", link_url: linkedinUrl, click_location: "resume" })}
+                />
               </div>
             </motion.div>
           </div>
