@@ -60,7 +60,7 @@ export const resumeData: ResumeData = {
     },
     {
       id: "exp-2",
-      role: "Lead Data Engineer",
+      role: "Data Engineer",
       company: "Bytedance Ltd",
       period: "Jan 2024 - Aug 2025",
       description: [
@@ -84,7 +84,7 @@ export const resumeData: ResumeData = {
     },
     {
       id: "exp-4",
-      role: "Software Engineer & Data Analyst",
+      role: "Software Engineer",
       company: "PT. Pasifik Satelit Nusantara",
       period: "Mar 2018 - Sep 2018",
       description: [

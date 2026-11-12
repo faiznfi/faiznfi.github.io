@@ -16,7 +16,6 @@ import { computeFingerprint, type Fingerprint } from "./fingerprint";
 import { buildProfile } from "./profile";
 import { useBehavior } from "./useBehavior";
 import { TypingDemo } from "./TypingDemo";
-import { DataLayerPanel } from "./DataLayerPanel";
 import { Reveal } from "./Reveal";
 import { ScreenShareDemo } from "./ScreenShareDemo";
 import { Clickjacking } from "./Clickjacking";
@@ -170,7 +169,7 @@ export function WhoAmI() {
             <strong className="font-mono text-xs uppercase tracking-widest text-emerald-400">Nothing is stored.</strong>{" "}
             Everything below, including your camera, is computed in your browser and disappears when you close the tab. There are two exceptions,
             and both are shown openly: this site runs Google Analytics, which records an anonymous page view and which
-            demo buttons you press (see <a href="#sent" className="underline">section 09</a>), and the IP lookup
+            demo buttons you press, and the IP lookup
             button sends your IP to a geo-IP service, only if you press it.
           </div>
         </div>
@@ -541,23 +540,8 @@ export function WhoAmI() {
           </div>
         </Section>
 
-        {/* 15 — What this page sent */}
-        <Section
-          id="sent"
-          index="15"
-          title="What this page actually sent"
-          lead="Below is every event this page pushed to Google Tag Manager. Compare it with everything above: none of the values shown on this page are in it."
-        >
-          <DataLayerPanel />
-          <p className="mt-4 text-sm text-white/60 leading-relaxed">
-            Google Analytics itself also receives the standard page-view data every site using it receives: page URL,
-            referrer, screen size, language, and a city-level location that Google derives from your IP. Google says it
-            does not store the IP in Analytics. This page adds no personal data on top of that.
-          </p>
-        </Section>
-
-        {/* 16 — Protect yourself */}
-        <Section id="protect" index="16" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
+        {/* 15 — Protect yourself */}
+        <Section id="protect" index="15" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
           <div className="grid gap-4 md:grid-cols-2">
             {[
               ["Use a privacy-focused browser", "Brave, Firefox (strict tracking protection), Safari, or Tor Browser for maximum anonymity. They block trackers and randomise fingerprints."],
