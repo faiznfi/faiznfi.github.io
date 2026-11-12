@@ -18,6 +18,9 @@ import { useBehavior } from "./useBehavior";
 import { TypingDemo } from "./TypingDemo";
 import { DataLayerPanel } from "./DataLayerPanel";
 import { Reveal } from "./Reveal";
+import { ScreenShareDemo } from "./ScreenShareDemo";
+import { Clickjacking } from "./Clickjacking";
+import { useScreenShare } from "./useScreenShare";
 import { useCamera } from "./useCamera";
 import { Button, Card, Insight, Notice, Row, Rows, Section, Stat } from "./ui";
 
@@ -41,6 +44,7 @@ export function WhoAmI() {
   const [preciseError, setPreciseError] = useState<string>();
 
   const camera = useCamera();
+  const screen = useScreenShare();
   const autoAsked = useRef(false);
 
   const trailCanvas = useRef<HTMLCanvasElement>(null);
@@ -115,6 +119,14 @@ export function WhoAmI() {
       demo_result: result === "on" ? "granted" : result === "denied" ? "denied" : "error",
     });
     collectAsync().then(setExtra);
+  }
+
+  async function onScreenShare() {
+    const result = await screen.start();
+    track("whoami_action", {
+      demo_action: "screen_share",
+      demo_result: result === "on" ? "granted" : result === "denied" ? "denied" : "error",
+    });
   }
 
   const he = extra?.highEntropy;
@@ -489,10 +501,13 @@ export function WhoAmI() {
           <TypingDemo />
         </Section>
 
-        {/* 08 — The point */}
+        <ScreenShareDemo screen={{ ...screen, start: onScreenShare }} />
+        <Clickjacking />
+
+        {/* 10 — The point */}
         <Section
           id="combine"
-          index="08"
+          index="10"
           title="Why combining is the real danger"
           lead="No single item above identifies you. Together, they do."
         >
@@ -518,10 +533,10 @@ export function WhoAmI() {
           </div>
         </Section>
 
-        {/* 09 — What this page sent */}
+        {/* 11 — What this page sent */}
         <Section
           id="sent"
-          index="09"
+          index="11"
           title="What this page actually sent"
           lead="Below is every event this page pushed to Google Tag Manager. Compare it with everything above: none of the values shown on this page are in it."
         >
@@ -533,8 +548,8 @@ export function WhoAmI() {
           </p>
         </Section>
 
-        {/* 10 — Protect yourself */}
-        <Section id="protect" index="10" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
+        {/* 12 — Protect yourself */}
+        <Section id="protect" index="12" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
           <div className="grid gap-4 md:grid-cols-2">
             {[
               ["Use a privacy-focused browser", "Brave, Firefox (strict tracking protection), Safari, or Tor Browser for maximum anonymity. They block trackers and randomise fingerprints."],
