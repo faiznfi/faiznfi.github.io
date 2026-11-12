@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import type { PreciseLocation } from "./collectors";
 import type { CameraStatus } from "./useCamera";
 import { Button, Card, Insight } from "./ui";
+import { useCopy, useLang } from "./i18n";
 
 type LocationStatus = "idle" | "loading" | "done" | "error";
 
@@ -10,20 +11,97 @@ interface RevealProps {
   location: { value?: PreciseLocation; status: LocationStatus; error?: string; retry: () => void };
 }
 
-function headline(camera: CameraStatus, located: boolean, locationAnswered: boolean) {
+const COPY = {
+  en: {
+    kicker: '[!!] Did you just click "Allow"?',
+    h: {
+      look: ["Look at the top of your browser.", "This page just asked for your location and camera."],
+      noCamLocated: ["You clicked Allow.", "No camera was found, but your location was enough. Here's what it handed over."],
+      noCamBlocked: ["You blocked your location.", "No camera was found on this device. Here's what you would have handed over."],
+      allowTwice: ["You clicked Allow. Twice.", "No reason was given. Here's what that handed over."],
+      camOnly: ["You blocked your location, but you let me see you.", "Here's what the camera handed over."],
+      locOnly: ["You hid your face, but not where you are.", "Here's what your location handed over."],
+      blockedBoth: ["You blocked both. Most people don't.", "Here's what would have appeared if you had clicked Allow."],
+    },
+    cameraTitle: "Your camera",
+    live: "LIVE",
+    camWaiting: "Waiting for your answer…",
+    camDenied: "Blocked. A site that got a yes would see your face here, live.",
+    camOff: "Camera stopped.",
+    camIdle: "Not requested yet.",
+    takeAnother: "Take another photo",
+    turnOff: "Turn camera off",
+    askAgain: "Ask again",
+    videoNote: "The video stays on your device. It is not recorded or uploaded.",
+    locationTitle: "Your location",
+    accuracyPrefix: "Accurate to about",
+    accuracyBuilding: ": that's your building, not just your city.",
+    accuracyPeriod: ".",
+    showMap: "Show it on a map",
+    mapNote: "Loads OpenStreetMap, which receives these coordinates.",
+    locWaiting: "Waiting for your answer…",
+    locUnavailable: "Location unavailable.",
+    locIdle: "Not requested yet.",
+    locBlocked: "location: blocked",
+    snapshotTitle: "Photo taken automatically, 3 seconds after you said yes",
+    snapAlt: "A still photo of you taken by this page",
+    snapP1a: "No button, no sound, no flash. The page captured this frame by itself and stamped it with the time",
+    snapP1coords: " and your coordinates",
+    snapP2:
+      "This copy only exists in this tab's memory. A malicious site could upload the same image in one line of code, and you'd see nothing except the camera light that's already on.",
+    insight:
+      "If you clicked Allow without thinking, that's exactly how it happens. Prompts appear the moment a page loads, look routine, and block what you came to see, so people click whatever makes them go away. A permission you grant usually stays granted for that site on later visits too. Before you click Allow, ask: does this site actually need it, right now?",
+  },
+  id: {
+    kicker: '[!!] Barusan kamu klik "Izinkan"?',
+    h: {
+      look: ["Lihat bagian atas browser kamu.", "Halaman ini barusan meminta lokasi dan kamera kamu."],
+      noCamLocated: ["Kamu klik Izinkan.", "Tidak ada kamera ditemukan, tapi lokasimu sudah cukup. Ini yang diserahkan."],
+      noCamBlocked: ["Kamu memblokir lokasimu.", "Tidak ada kamera di perangkat ini. Ini yang akan kamu serahkan."],
+      allowTwice: ["Kamu klik Izinkan. Dua kali.", "Tanpa alasan apa pun. Ini yang diserahkan."],
+      camOnly: ["Kamu memblokir lokasi, tapi membiarkan aku melihatmu.", "Ini yang diserahkan kamera."],
+      locOnly: ["Kamu menyembunyikan wajah, tapi tidak lokasimu.", "Ini yang diserahkan lokasimu."],
+      blockedBoth: ["Kamu memblokir keduanya. Kebanyakan orang tidak.", "Ini yang akan muncul kalau kamu klik Izinkan."],
+    },
+    cameraTitle: "Kamera kamu",
+    live: "LANGSUNG",
+    camWaiting: "Menunggu jawabanmu…",
+    camDenied: "Diblokir. Situs yang mendapat 'ya' akan melihat wajahmu di sini, langsung.",
+    camOff: "Kamera dihentikan.",
+    camIdle: "Belum diminta.",
+    takeAnother: "Ambil foto lagi",
+    turnOff: "Matikan kamera",
+    askAgain: "Minta lagi",
+    videoNote: "Video tetap di perangkatmu. Tidak direkam atau diunggah.",
+    locationTitle: "Lokasi kamu",
+    accuracyPrefix: "Akurat sampai sekitar",
+    accuracyBuilding: ": itu gedungmu, bukan hanya kotamu.",
+    accuracyPeriod: ".",
+    showMap: "Tampilkan di peta",
+    mapNote: "Memuat OpenStreetMap, yang menerima koordinat ini.",
+    locWaiting: "Menunggu jawabanmu…",
+    locUnavailable: "Lokasi tidak tersedia.",
+    locIdle: "Belum diminta.",
+    locBlocked: "lokasi: diblokir",
+    snapshotTitle: "Foto diambil otomatis, 3 detik setelah kamu bilang ya",
+    snapAlt: "Foto diam dirimu yang diambil halaman ini",
+    snapP1a: "Tanpa tombol, tanpa suara, tanpa flash. Halaman ini menangkap gambar ini sendiri dan menandainya dengan waktu",
+    snapP1coords: " dan koordinatmu",
+    snapP2:
+      "Salinan ini hanya ada di memori tab ini. Situs jahat bisa mengunggah gambar yang sama dengan satu baris kode, dan kamu tidak akan melihat apa pun selain lampu kamera yang sudah menyala.",
+    insight:
+      "Kalau kamu klik Izinkan tanpa berpikir, persis begitulah caranya terjadi. Prompt muncul saat halaman dimuat, terlihat biasa, dan menghalangi apa yang ingin kamu lihat, jadi orang klik apa pun yang membuatnya hilang. Izin yang kamu berikan biasanya tetap aktif untuk situs itu pada kunjungan berikutnya. Sebelum klik Izinkan, tanya: apakah situs ini memang butuh itu, sekarang?",
+  },
+};
+
+function headline(h: (typeof COPY)["en"]["h"], camera: CameraStatus, located: boolean, locationAnswered: boolean) {
   const cameraOn = camera === "on";
-  if (camera === "idle" || camera === "asking" || !locationAnswered) {
-    return ["Look at the top of your browser.", "This page just asked for your location and camera."];
-  }
-  if (camera === "unavailable") {
-    return located
-      ? ["You clicked Allow.", "No camera was found, but your location was enough. Here's what it handed over."]
-      : ["You blocked your location.", "No camera was found on this device. Here's what you would have handed over."];
-  }
-  if (cameraOn && located) return ["You clicked Allow. Twice.", "No reason was given. Here's what that handed over."];
-  if (cameraOn) return ["You blocked your location, but you let me see you.", "Here's what the camera handed over."];
-  if (located) return ["You hid your face, but not where you are.", "Here's what your location handed over."];
-  return ["You blocked both. Most people don't.", "Here's what would have appeared if you had clicked Allow."];
+  if (camera === "idle" || camera === "asking" || !locationAnswered) return h.look;
+  if (camera === "unavailable") return located ? h.noCamLocated : h.noCamBlocked;
+  if (cameraOn && located) return h.allowTwice;
+  if (cameraOn) return h.camOnly;
+  if (located) return h.locOnly;
+  return h.blockedBoth;
 }
 
 /**
@@ -31,16 +109,20 @@ function headline(camera: CameraStatus, located: boolean, locationAnswered: bool
  * visitor's live camera, an automatic still photo, and their GPS position.
  */
 export function Reveal({ camera, location }: RevealProps) {
+  const t = useCopy(COPY);
+  const { lang } = useLang();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [snapshot, setSnapshot] = useState<{ image: string; takenAt: Date }>();
   const [showMap, setShowMap] = useState(false);
   const precise = location.value;
   const preciseRef = useRef(precise);
   preciseRef.current = precise;
+  const tRef = useRef(t);
+  tRef.current = t;
 
   const cameraOn = camera.status === "on";
   const locationAnswered = location.status === "done" || location.status === "error";
-  const [title, subtitle] = headline(camera.status, location.status === "done", locationAnswered);
+  const [title, subtitle] = headline(t.h, camera.status, location.status === "done", locationAnswered);
 
   function takeSnapshot() {
     const video = videoRef.current;
@@ -59,8 +141,8 @@ export function Reveal({ camera, location }: RevealProps) {
     const takenAt = new Date();
     const loc = preciseRef.current;
     const lines = [
-      takenAt.toLocaleString("en-GB"),
-      loc ? `${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)} (±${loc.accuracyM} m)` : "location: blocked",
+      takenAt.toLocaleString(lang === "id" ? "id-ID" : "en-GB"),
+      loc ? `${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)} (±${loc.accuracyM} m)` : tRef.current.locBlocked,
     ];
     const size = Math.max(14, Math.round(canvas.width / 40));
     ctx.font = `${size}px ui-monospace, monospace`;
@@ -89,7 +171,7 @@ export function Reveal({ camera, location }: RevealProps) {
 
   return (
     <section aria-labelledby="reveal-title" className="pb-16">
-      <span className="font-mono text-pink-400 text-[11px] uppercase tracking-widest">[!!] Did you just click "Allow"?</span>
+      <span className="font-mono text-pink-400 text-[11px] uppercase tracking-widest">{t.kicker}</span>
       <h2 id="reveal-title" className="mt-2 text-3xl md:text-5xl font-bold tracking-tight">
         {title}
       </h2>
@@ -97,13 +179,13 @@ export function Reveal({ camera, location }: RevealProps) {
 
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         {/* Camera */}
-        <Card title="Your camera">
+        <Card title={t.cameraTitle}>
           <div className="relative aspect-video bg-black border border-white/10 overflow-hidden">
             {cameraOn ? (
               <>
                 <video ref={videoRef} autoPlay muted playsInline className="h-full w-full object-cover -scale-x-100" />
                 <span className="absolute top-3 left-3 flex items-center gap-2 bg-black/60 px-2 py-1 font-mono text-[11px] text-red-400">
-                  <span className="h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" /> LIVE
+                  <span className="h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" /> {t.live}
                 </span>
                 {precise && (
                   <span className="absolute bottom-3 left-3 bg-black/60 px-2 py-1 font-mono text-[11px] text-cyan-300">
@@ -113,88 +195,80 @@ export function Reveal({ camera, location }: RevealProps) {
               </>
             ) : (
               <div className="flex h-full items-center justify-center p-6 text-center text-sm text-white/50">
-                {camera.status === "asking" && "Waiting for your answer…"}
-                {camera.status === "denied" && "Blocked. A site that got a yes would see your face here, live."}
-                {camera.status === "off" && "Camera stopped."}
+                {camera.status === "asking" && t.camWaiting}
+                {camera.status === "denied" && t.camDenied}
+                {camera.status === "off" && t.camOff}
                 {camera.status === "unavailable" && camera.error}
-                {camera.status === "idle" && "Not requested yet."}
+                {camera.status === "idle" && t.camIdle}
               </div>
             )}
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
             {cameraOn ? (
               <>
-                <Button onClick={takeSnapshot}>Take another photo</Button>
-                <Button onClick={camera.stop}>Turn camera off</Button>
+                <Button onClick={takeSnapshot}>{t.takeAnother}</Button>
+                <Button onClick={camera.stop}>{t.turnOff}</Button>
               </>
             ) : (
-              camera.status !== "asking" && <Button onClick={camera.start}>Ask again</Button>
+              camera.status !== "asking" && <Button onClick={camera.start}>{t.askAgain}</Button>
             )}
           </div>
-          <p className="mt-3 text-xs text-white/40">The video stays on your device. It is not recorded or uploaded.</p>
+          <p className="mt-3 text-xs text-white/40">{t.videoNote}</p>
         </Card>
 
         {/* Location */}
-        <Card title="Your location">
+        <Card title={t.locationTitle}>
           {precise ? (
             <>
               <div className="font-mono text-3xl md:text-4xl text-cyan-400 tabular-nums break-all">
                 {precise.latitude.toFixed(5)}, {precise.longitude.toFixed(5)}
               </div>
               <p className="mt-2 text-sm text-white/60">
-                Accurate to about <span className="text-white">{precise.accuracyM} m</span>
-                {precise.accuracyM <= 100 ? ": that's your building, not just your city." : "."}
+                {t.accuracyPrefix} <span className="text-white">{precise.accuracyM} m</span>
+                {precise.accuracyM <= 100 ? t.accuracyBuilding : t.accuracyPeriod}
               </p>
               <div className="mt-4 aspect-video border border-white/10 bg-black">
                 {showMap && mapUrl ? (
                   <iframe title="Your location on a map" src={mapUrl} className="h-full w-full" loading="lazy" />
                 ) : (
                   <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-                    <Button onClick={() => setShowMap(true)}>Show it on a map</Button>
-                    <span className="text-xs text-white/40">Loads OpenStreetMap, which receives these coordinates.</span>
+                    <Button onClick={() => setShowMap(true)}>{t.showMap}</Button>
+                    <span className="text-xs text-white/40">{t.mapNote}</span>
                   </div>
                 )}
               </div>
             </>
           ) : (
             <div className="flex aspect-video items-center justify-center p-6 text-center text-sm text-white/50 border border-white/10 bg-black">
-              {location.status === "loading" && "Waiting for your answer…"}
-              {location.status === "error" && (location.error ?? "Location unavailable.")}
-              {location.status === "idle" && "Not requested yet."}
+              {location.status === "loading" && t.locWaiting}
+              {location.status === "error" && (location.error ?? t.locUnavailable)}
+              {location.status === "idle" && t.locIdle}
             </div>
           )}
           {location.status !== "loading" && !precise && (
             <div className="mt-4">
-              <Button onClick={location.retry}>Ask again</Button>
+              <Button onClick={location.retry}>{t.askAgain}</Button>
             </div>
           )}
         </Card>
       </div>
 
       {snapshot && (
-        <Card title="Photo taken automatically, 3 seconds after you said yes" className="mt-4">
+        <Card title={t.snapshotTitle} className="mt-4">
           <div className="grid gap-4 md:grid-cols-[2fr_3fr] items-start">
-            <img src={snapshot.image} alt="A still photo of you taken by this page" className="w-full border border-white/10" />
+            <img src={snapshot.image} alt={t.snapAlt} className="w-full border border-white/10" />
             <div className="text-sm text-white/70 leading-relaxed space-y-3">
               <p>
-                No button, no sound, no flash. The page captured this frame by itself and stamped it with the time
-                {precise ? " and your coordinates" : ""}.
+                {t.snapP1a}
+                {precise ? t.snapP1coords : ""}.
               </p>
-              <p>
-                This copy only exists in this tab's memory. A malicious site could upload the same image in one line of
-                code, and you'd see nothing except the camera light that's already on.
-              </p>
+              <p>{t.snapP2}</p>
             </div>
           </div>
         </Card>
       )}
 
-      <Insight>
-        If you clicked Allow without thinking, that's exactly how it happens. Prompts appear the moment a page loads,
-        look routine, and block what you came to see, so people click whatever makes them go away. A permission
-        you grant usually stays granted for that site on later visits too. Before you click Allow, ask: does this
-        site actually need it, right now?
-      </Insight>
+      <Insight>{t.insight}</Insight>
     </section>
   );
 }

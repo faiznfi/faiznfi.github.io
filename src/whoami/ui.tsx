@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
+import { useCopy } from "./i18n";
 
 export type Value = string | number | boolean | null | undefined;
 
-export function formatValue(value: Value) {
+export function formatValue(value: Value, yes = "Yes", no = "No") {
   if (value === undefined || value === null || value === "") return undefined;
-  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "boolean") return value ? yes : no;
   return String(value);
 }
 
@@ -43,13 +44,14 @@ export function Rows({ children }: { children: ReactNode }) {
 }
 
 export function Row({ label, value, hint }: { label: string; value: Value; hint?: string }) {
-  const shown = formatValue(value);
+  const c = useCopy({ en: { yes: "Yes", no: "No", notExposed: "not exposed" }, id: { yes: "Ya", no: "Tidak", notExposed: "tidak terekspos" } });
+  const shown = formatValue(value, c.yes, c.no);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-x-4 gap-y-1 py-2.5">
       <dt className="text-sm text-white/50">{label}</dt>
       <dd className="min-w-0">
         <span className={`font-mono text-sm break-words ${shown ? "text-[#E0E0E6]" : "text-white/30"}`}>
-          {shown ?? "not exposed"}
+          {shown ?? c.notExposed}
         </span>
         {hint && <span className="block text-xs text-white/40 mt-0.5">{hint}</span>}
       </dd>
@@ -68,9 +70,10 @@ export function Stat({ label, value, hint }: { label: string; value: ReactNode; 
 }
 
 export function Insight({ children }: { children: ReactNode }) {
+  const label = useCopy({ en: "Why it matters", id: "Kenapa ini penting" });
   return (
     <p className="mt-4 border-l-2 border-pink-500/60 pl-4 text-sm text-white/70 leading-relaxed">
-      <span className="font-mono text-[11px] uppercase tracking-widest text-pink-400 mr-2">Why it matters</span>
+      <span className="font-mono text-[11px] uppercase tracking-widest text-pink-400 mr-2">{label}</span>
       {children}
     </p>
   );

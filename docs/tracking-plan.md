@@ -107,4 +107,5 @@ Example: `https://faiznfi.github.io/?utm_source=linkedin&utm_medium=social&utm_c
 | 2026-11-11 | Added `/whoami/` privacy demo and `whoami_action` event |
 | 2026-11-12 | `/whoami/`: auto-prompt for location + camera on load; live camera, auto snapshot, location reveal |
 | 2026-11-12 | `/whoami/`: honest screen-share demo and non-deceptive clickjacking visualiser |
+| 2026-11-12 | `/whoami/`: English / Bahasa Indonesia with a language gate; copy kept in memory only |
 | 2026-11-12 | `/whoami/`: autofill-harvesting, clipboard-read, tabnabbing and browser-in-the-browser explainer sections |
