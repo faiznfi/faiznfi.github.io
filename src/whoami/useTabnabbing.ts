@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-const FAKE_TITLE = "⚠ Session expired — sign in again";
 const FAKE_FAVICON =
   "data:image/svg+xml," +
   encodeURIComponent(
@@ -23,12 +22,13 @@ function setFavicon(href: string) {
  * come back, it restores itself and reports that it changed while hidden.
  * It only changes this tab's own title/icon; it never opens or fakes a login.
  */
-export function useTabnabbing(enabled: boolean) {
+export function useTabnabbing(enabled: boolean, fakeTitle: string) {
   const [swapped, setSwapped] = useState(false);
   const [caughtAt, setCaughtAt] = useState<Date>();
 
   useEffect(() => {
     if (!enabled) return;
+    const FAKE_TITLE = fakeTitle;
     const originalTitle = document.title;
     const originalIcon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')?.href ?? "/favicon.ico";
     let timer: number | undefined;
@@ -62,7 +62,7 @@ export function useTabnabbing(enabled: boolean) {
       document.title = originalTitle;
       setFavicon(originalIcon);
     };
-  }, [enabled]);
+  }, [enabled, fakeTitle]);
 
-  return { swapped, caughtAt, fakeTitle: FAKE_TITLE };
+  return { swapped, caughtAt };
 }
