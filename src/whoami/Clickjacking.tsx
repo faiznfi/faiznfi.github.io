@@ -32,26 +32,30 @@ export function Clickjacking() {
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr] items-start">
-        <div className="relative select-none">
-          {/* Decoy the victim thinks they are clicking */}
-          <button
-            type="button"
-            onClick={onClick}
-            className="w-full py-10 bg-gradient-to-r from-cyan-500 to-purple-500 text-black text-xl font-bold uppercase tracking-widest"
-          >
-            🎁 Claim your free prize
-          </button>
+        <div className="select-none">
+          {/* Only the button area is positioned, so the overlay covers the
+              buttons and nothing else (an earlier version covered the slider). */}
+          <div className="relative">
+            {/* Decoy the victim thinks they are clicking */}
+            <button
+              type="button"
+              onClick={onClick}
+              className="w-full py-10 bg-gradient-to-r from-cyan-500 to-purple-500 text-black text-xl font-bold uppercase tracking-widest"
+            >
+              🎁 Claim your free prize
+            </button>
 
-          {/* Hidden malicious layer, on top, intercepting the click */}
-          <button
-            type="button"
-            onClick={onClick}
-            aria-hidden="true"
-            style={{ opacity }}
-            className="absolute inset-0 flex items-center justify-center bg-red-600 text-white text-xl font-bold uppercase tracking-widest cursor-pointer"
-          >
-            ⚠ Allow this site to post as you
-          </button>
+            {/* Hidden malicious layer, on top, intercepting the click */}
+            <button
+              type="button"
+              onClick={onClick}
+              aria-hidden="true"
+              style={{ opacity }}
+              className="absolute inset-0 flex items-center justify-center bg-red-600 text-white text-xl font-bold uppercase tracking-widest cursor-pointer"
+            >
+              ⚠ Allow this site to post as you
+            </button>
+          </div>
 
           <div className="mt-6">
             <label htmlFor="cj-opacity" className="block font-mono text-[11px] uppercase tracking-widest text-white/50 mb-2">
