@@ -20,6 +20,10 @@ import { DataLayerPanel } from "./DataLayerPanel";
 import { Reveal } from "./Reveal";
 import { ScreenShareDemo } from "./ScreenShareDemo";
 import { Clickjacking } from "./Clickjacking";
+import { AutofillDemo } from "./AutofillDemo";
+import { ClipboardDemo } from "./ClipboardDemo";
+import { Tabnabbing } from "./Tabnabbing";
+import { FakeWindow } from "./FakeWindow";
 import { useScreenShare } from "./useScreenShare";
 import { useCamera } from "./useCamera";
 import { Button, Card, Insight, Notice, Row, Rows, Section, Stat } from "./ui";
@@ -503,11 +507,15 @@ export function WhoAmI() {
 
         <ScreenShareDemo screen={{ ...screen, start: onScreenShare }} />
         <Clickjacking />
+        <AutofillDemo />
+        <ClipboardDemo />
+        <Tabnabbing />
+        <FakeWindow />
 
-        {/* 10 — The point */}
+        {/* 14 — The point */}
         <Section
           id="combine"
-          index="10"
+          index="14"
           title="Why combining is the real danger"
           lead="No single item above identifies you. Together, they do."
         >
@@ -533,10 +541,10 @@ export function WhoAmI() {
           </div>
         </Section>
 
-        {/* 11 — What this page sent */}
+        {/* 15 — What this page sent */}
         <Section
           id="sent"
-          index="11"
+          index="15"
           title="What this page actually sent"
           lead="Below is every event this page pushed to Google Tag Manager. Compare it with everything above: none of the values shown on this page are in it."
         >
@@ -548,8 +556,8 @@ export function WhoAmI() {
           </p>
         </Section>
 
-        {/* 12 — Protect yourself */}
-        <Section id="protect" index="12" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
+        {/* 16 — Protect yourself */}
+        <Section id="protect" index="16" title="How to protect yourself" lead="You can't hide everything. You can make it much harder.">
           <div className="grid gap-4 md:grid-cols-2">
             {[
               ["Use a privacy-focused browser", "Brave, Firefox (strict tracking protection), Safari, or Tor Browser for maximum anonymity. They block trackers and randomise fingerprints."],

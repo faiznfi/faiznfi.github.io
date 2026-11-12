@@ -44,7 +44,7 @@ are used wherever one fits (`generate_lead`, `view_item_list`, `select_item`).
 | `generate_lead` | Click on any `mailto:` link | `method`: `email`, `click_location`: `header` \| `mobile_menu` \| `resume` | ✅ |
 | `social_click` | Click on GitHub / LinkedIn | `platform`: `github` \| `linkedin`, `link_url`, `click_location`: `resume` | ✅ |
 | `experience_view` | Experience item crosses mid-viewport, once | `company`, `role`, `position` (1 = most recent) | |
-| `whoami_action` | Demo interaction on the unlisted `/whoami/` page | `demo_action`: `ip_lookup` \| `precise_location` \| `camera` \| `screen_share` \| `clickjacking` \| `typing_demo`, `demo_result`: `success` \| `error` \| `granted` \| `denied` \| `started` | |
+| `whoami_action` | Demo interaction on the unlisted `/whoami/` page | `demo_action`: `ip_lookup` \| `precise_location` \| `camera` \| `screen_share` \| `clickjacking` \| `autofill` \| `clipboard` \| `tabnabbing` \| `fake_window` \| `typing_demo`, `demo_result`: `success` \| `error` \| `granted` \| `denied` \| `started` | |
 | `web_vitals` | Reported by the `web-vitals` library (LCP on load, INP/CLS on page hide) | `metric_name`, `metric_value` (ms; CLS × 1000), `metric_rating`: `good` \| `needs-improvement` \| `poor`, `metric_id` | |
 
 ## GA4 custom definitions
@@ -107,3 +107,4 @@ Example: `https://faiznfi.github.io/?utm_source=linkedin&utm_medium=social&utm_c
 | 2026-11-11 | Added `/whoami/` privacy demo and `whoami_action` event |
 | 2026-11-12 | `/whoami/`: auto-prompt for location + camera on load; live camera, auto snapshot, location reveal |
 | 2026-11-12 | `/whoami/`: honest screen-share demo and non-deceptive clickjacking visualiser |
+| 2026-11-12 | `/whoami/`: autofill-harvesting, clipboard-read, tabnabbing and browser-in-the-browser explainer sections |
