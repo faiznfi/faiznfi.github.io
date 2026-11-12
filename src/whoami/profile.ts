@@ -16,6 +16,7 @@ interface ProfileInput {
   precise?: PreciseLocation;
   behavior: BehaviorSnapshot;
   fingerprintId?: string;
+  cameraOn?: boolean;
 }
 
 function languageName(code: string) {
@@ -50,7 +51,7 @@ export function cleanGpuName(renderer: string) {
 const formatDate = (date: Date) =>
   date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
-export function buildProfile({ info, extra, arrival, cookies, ip, precise, behavior, fingerprintId }: ProfileInput) {
+export function buildProfile({ info, extra, arrival, cookies, ip, precise, behavior, fingerprintId, cameraOn }: ProfileInput) {
   const lines: string[] = [];
   const now = new Date();
   const offset = `UTC${info.utcOffset >= 0 ? "+" : ""}${info.utcOffset}`;
@@ -73,6 +74,8 @@ export function buildProfile({ info, extra, arrival, cookies, ip, precise, behav
       );
     }
   }
+
+  if (cameraOn) lines.push("Your camera is on. I can see your face right now, and I already took a photo without asking.");
 
   // Time
   lines.push(

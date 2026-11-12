@@ -25,7 +25,7 @@ export interface EventMap {
   experience_view: { company: string; role: string; position: number };
   /** /whoami demo. Only the action and its outcome are sent, never the values the page reveals. */
   whoami_action: {
-    demo_action: "ip_lookup" | "precise_location" | "typing_demo";
+    demo_action: "ip_lookup" | "precise_location" | "camera" | "typing_demo";
     demo_result: "success" | "error" | "granted" | "denied" | "started";
   };
   web_vitals: {
