@@ -2,6 +2,14 @@ import type { ResumeData, Project } from "./types";
 
 export const projectsData: Project[] = [
   {
+    id: "whoami",
+    title: "Who Am I",
+    description: "A live privacy lab that shows visitors exactly what any website can read from their browser, from location and device to a cookieless fingerprint, and demonstrates real tricks like clickjacking and tabnabbing. Everything runs in the browser; nothing is stored.",
+    link: "https://faiznfi.github.io/whoami",
+    tags: ["Privacy", "Security", "Web"],
+    icon: "fingerprint",
+  },
+  {
     id: "followers-analysis",
     title: "Followers Analysis",
     description: "A client-side web application to quickly and securely analyze your Instagram followers, following, mutuals, fans, non-followers, recently unfollowed, blocked profiles, and pending requests.",
