@@ -23,6 +23,11 @@ export interface EventMap {
   generate_lead: { method: "email"; click_location: ClickLocation };
   social_click: { platform: "github" | "linkedin"; link_url: string; click_location: ClickLocation };
   experience_view: { company: string; role: string; position: number };
+  /** /whoami demo. Only the action and its outcome are sent, never the values the page reveals. */
+  whoami_action: {
+    demo_action: "ip_lookup" | "precise_location" | "typing_demo";
+    demo_result: "success" | "error" | "granted" | "denied" | "started";
+  };
   web_vitals: {
     metric_name: string;
     metric_value: number;
