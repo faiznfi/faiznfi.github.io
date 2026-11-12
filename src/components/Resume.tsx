@@ -45,7 +45,7 @@ export function Resume() {
   return (
     <section ref={sectionRef} id="resume" aria-labelledby="resume-title" className="py-24 relative z-10 bg-[#0F0F12] scroll-mt-16">
       <div className="container mx-auto px-6 max-w-6xl">
-        <SectionHeader id="resume-title" label="PROFESSIONAL_RECORD" title={["Interactive", "Resume"]} />
+        <SectionHeader id="resume-title" label="PROFESSIONAL_RECORD" title="Resume" />
 
         {summary && (
           <motion.p {...fadeUp()} className="mb-12 max-w-3xl text-white/70 leading-relaxed">

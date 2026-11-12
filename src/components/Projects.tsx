@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
-import { BarChart3, MapPin, Sparkles, ArrowRight } from "lucide-react";
+import { Fingerprint, BarChart3, MapPin, Sparkles, ArrowRight } from "lucide-react";
 import { projectsData } from "../data";
 import type { ProjectIcon } from "../types";
 import { fadeScale } from "../lib/motion";
@@ -10,6 +10,7 @@ import { SectionHeader } from "./ui/SectionHeader";
 import { TagList } from "./ui/Tag";
 
 const iconMap: Record<ProjectIcon, ReactNode> = {
+  "fingerprint": <Fingerprint className="w-6 h-6 text-cyan-400" />,
   "bar-chart": <BarChart3 className="w-4 h-4 text-cyan-400" />,
   "map-pin": <MapPin className="w-4 h-4 text-purple-400" />,
   sparkles: <Sparkles className="w-4 h-4 text-pink-400" />,
