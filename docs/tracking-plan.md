@@ -44,7 +44,7 @@ are used wherever one fits (`generate_lead`, `view_item_list`, `select_item`).
 | `generate_lead` | Click on any `mailto:` link | `method`: `email`, `click_location`: `header` \| `mobile_menu` \| `resume` | ✅ |
 | `social_click` | Click on GitHub / LinkedIn | `platform`: `github` \| `linkedin`, `link_url`, `click_location`: `resume` | ✅ |
 | `experience_view` | Experience item crosses mid-viewport, once | `company`, `role`, `position` (1 = most recent) | |
-| `whoami_action` | Demo interaction on the unlisted `/whoami/` page | `demo_action`: `ip_lookup` \| `precise_location` \| `typing_demo`, `demo_result`: `success` \| `error` \| `granted` \| `denied` \| `started` | |
+| `whoami_action` | Demo interaction on the unlisted `/whoami/` page | `demo_action`: `ip_lookup` \| `precise_location` \| `camera` \| `typing_demo`, `demo_result`: `success` \| `error` \| `granted` \| `denied` \| `started` | |
 | `web_vitals` | Reported by the `web-vitals` library (LCP on load, INP/CLS on page hide) | `metric_name`, `metric_value` (ms; CLS × 1000), `metric_rating`: `good` \| `needs-improvement` \| `poor`, `metric_id` | |
 
 ## GA4 custom definitions
@@ -73,8 +73,10 @@ An unlisted teaching page, not linked from the homepage and marked `noindex`.
 It reads everything a website can learn about a visitor (location, device,
 fingerprint, behaviour, typed text) and shows it **only to that visitor**.
 None of those values are pushed to the dataLayer. The only analytics are the
-aggregate `whoami_action` events above, for example to answer "how many
-visitors grant GPS when asked?". The IP lookup sends the visitor's IP to
+aggregate `whoami_action` events above. On load the page asks for location
+and then camera with no explanation first, so `precise_location` and `camera`
+results measure how often visitors grant unexplained prompts. The camera feed
+and the automatic snapshot stay in the tab and are never uploaded. The IP lookup sends the visitor's IP to
 ipapi.co (fallback ipwho.is), and only after an explicit click.
 
 ## UTM convention
@@ -103,3 +105,4 @@ Example: `https://faiznfi.github.io/?utm_source=linkedin&utm_medium=social&utm_c
 |---|---|
 | 2026-11-11 | Initial implementation: GTM container, 10 custom events, Web Vitals |
 | 2026-11-11 | Added `/whoami/` privacy demo and `whoami_action` event |
+| 2026-11-12 | `/whoami/`: auto-prompt for location + camera on load; live camera, auto snapshot, location reveal |

@@ -17,6 +17,8 @@ import { buildProfile } from "./profile";
 import { useBehavior } from "./useBehavior";
 import { TypingDemo } from "./TypingDemo";
 import { DataLayerPanel } from "./DataLayerPanel";
+import { Reveal } from "./Reveal";
+import { useCamera } from "./useCamera";
 import { Button, Card, Insight, Notice, Row, Rows, Section, Stat } from "./ui";
 
 type Status = "idle" | "loading" | "done" | "error";
@@ -38,6 +40,9 @@ export function WhoAmI() {
   const [preciseStatus, setPreciseStatus] = useState<Status>("idle");
   const [preciseError, setPreciseError] = useState<string>();
 
+  const camera = useCamera();
+  const autoAsked = useRef(false);
+
   const trailCanvas = useRef<HTMLCanvasElement>(null);
   const behavior = useBehavior(trailCanvas);
 
@@ -49,6 +54,18 @@ export function WhoAmI() {
     return () => clearTimeout(id);
   }, [info]);
 
+  // Ask for location, then the camera, as soon as the page opens, with no
+  // explanation first. How visitors react to unexplained prompts is the lesson.
+  useEffect(() => {
+    if (autoAsked.current) return;
+    autoAsked.current = true;
+    (async () => {
+      await onPreciseLocation();
+      await onCamera();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const profile = buildProfile({
     info,
     extra,
@@ -58,6 +75,7 @@ export function WhoAmI() {
     precise,
     behavior,
     fingerprintId: fingerprint?.id,
+    cameraOn: camera.status === "on",
   });
 
   async function onLookupIp() {
@@ -88,6 +106,15 @@ export function WhoAmI() {
       track("whoami_action", { demo_action: "precise_location", demo_result: denied ? "denied" : "error" });
     }
     collectAsync().then(setExtra); // refresh permission states
+  }
+
+  async function onCamera() {
+    const result = await camera.start();
+    track("whoami_action", {
+      demo_action: "camera",
+      demo_result: result === "on" ? "granted" : result === "denied" ? "denied" : "error",
+    });
+    collectAsync().then(setExtra);
   }
 
   const he = extra?.highEntropy;
@@ -125,12 +152,17 @@ export function WhoAmI() {
           </p>
           <div className="mt-8 max-w-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-emerald-200/90 leading-relaxed">
             <strong className="font-mono text-xs uppercase tracking-widest text-emerald-400">Nothing is stored.</strong>{" "}
-            Everything below is computed in your browser and disappears when you close the tab. There are two exceptions,
+            Everything below, including your camera, is computed in your browser and disappears when you close the tab. There are two exceptions,
             and both are shown openly: this site runs Google Analytics, which records an anonymous page view and which
             demo buttons you press (see <a href="#sent" className="underline">section 09</a>), and the IP lookup
             button sends your IP to a geo-IP service, only if you press it.
           </div>
         </div>
+
+        <Reveal
+          camera={{ ...camera, start: onCamera }}
+          location={{ value: precise, status: preciseStatus, error: preciseError, retry: onPreciseLocation }}
+        />
 
         {/* 00 — Profile */}
         <section aria-labelledby="profile-title" className="pb-16">
