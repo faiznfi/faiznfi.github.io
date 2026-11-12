@@ -1,0 +1,99 @@
+import { useRef, useState } from "react";
+import { track } from "../lib/analytics";
+import { Card, Insight } from "./ui";
+
+const HIDDEN_FIELDS = [
+  { name: "tel", auto: "tel", label: "Phone" },
+  { name: "street-address", auto: "street-address", label: "Street address" },
+  { name: "postal-code", auto: "postal-code", label: "Postal code" },
+  { name: "bday", auto: "bday", label: "Date of birth" },
+  { name: "organization", auto: "organization", label: "Company" },
+  { name: "cc-name", auto: "cc-name", label: "Cardholder name" },
+] as const;
+
+/**
+ * Autofill harvesting: the visible form asks only for name and email, but
+ * off-screen fields request far more. When the browser autofills, it fills
+ * those too. Everything captured is shown back here and never sent anywhere.
+ */
+export function AutofillDemo() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [captured, setCaptured] = useState<{ label: string; value: string }[]>();
+
+  function reveal() {
+    const form = formRef.current;
+    if (!form) return;
+    const data = new FormData(form);
+    const visible = [
+      { label: "Name", value: String(data.get("name") ?? "") },
+      { label: "Email", value: String(data.get("email") ?? "") },
+    ];
+    const hidden = HIDDEN_FIELDS.map((f) => ({ label: f.label, value: String(data.get(f.name) ?? "") })).filter(
+      (f) => f.value,
+    );
+    setCaptured([...visible.filter((v) => v.value), ...hidden]);
+    track("whoami_action", { demo_action: "autofill", demo_result: hidden.length ? "granted" : "started" });
+  }
+
+  return (
+    <section id="autofill" aria-labelledby="autofill-title" className="py-16 border-t border-white/5 scroll-mt-8">
+      <span className="font-mono text-cyan-500 text-[11px] uppercase tracking-widest">[10]</span>
+      <h2 id="autofill-title" className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-[#E0E0E6]">
+        A form that asks for two things and takes eight
+      </h2>
+      <p className="mt-3 max-w-3xl text-white/60 leading-relaxed">
+        This form only shows <span className="text-white">Name</span> and <span className="text-white">Email</span>. But
+        off-screen, where you can't see, it also asks your browser for your phone, address, birthday, company and card
+        name. If you use autofill, the browser fills those too.
+      </p>
+
+      <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <Card title="Sign up (looks harmless)">
+          <form ref={formRef} onSubmit={(e) => e.preventDefault()} autoComplete="on">
+            <label className="block text-sm text-white/60 mb-1" htmlFor="af-name">Name</label>
+            <input id="af-name" name="name" autoComplete="name" className="mb-4 w-full bg-[#0A0A0C] border border-white/10 p-3 text-sm text-[#E0E0E6] focus:outline-none focus:border-cyan-500/50" />
+            <label className="block text-sm text-white/60 mb-1" htmlFor="af-email">Email</label>
+            <input id="af-email" name="email" type="email" autoComplete="email" className="w-full bg-[#0A0A0C] border border-white/10 p-3 text-sm text-[#E0E0E6] focus:outline-none focus:border-cyan-500/50" />
+
+            {/* Off-screen fields: present and fillable, but not visible. */}
+            <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: 0, height: 0, overflow: "hidden" }}>
+              {HIDDEN_FIELDS.map((f) => (
+                <input key={f.name} name={f.name} autoComplete={f.auto} tabIndex={-1} />
+              ))}
+            </div>
+
+            <button type="button" onClick={reveal} className="mt-5 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-cyan-400 transition-colors">
+              Continue
+            </button>
+          </form>
+          <p className="mt-3 text-xs text-white/40">Use your browser's autofill on the name field, then press Continue. Nothing is submitted or sent.</p>
+        </Card>
+
+        <Card title="What the hidden fields actually captured">
+          {captured ? (
+            captured.length ? (
+              <dl className="divide-y divide-white/5">
+                {captured.map((f) => (
+                  <div key={f.label} className="flex justify-between gap-4 py-2.5">
+                    <dt className="text-sm text-white/50">{f.label}</dt>
+                    <dd className="font-mono text-sm text-pink-400 break-all text-right">{f.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p className="text-sm text-white/50">Nothing captured. Either you typed by hand, or your browser's autofill had no saved profile. Try autofilling the name field.</p>
+            )
+          ) : (
+            <p className="text-sm text-white/50">Press Continue to see everything the form collected.</p>
+          )}
+        </Card>
+      </div>
+
+      <Insight>
+        Phishing kits use this to collect a full identity from a form that looks like it only wants an email. Protect
+        yourself by keeping little or no data in your browser's autofill profile, and by reviewing the autofill dropdown
+        before accepting it.
+      </Insight>
+    </section>
+  );
+}
