@@ -23,6 +23,7 @@ import { AutofillDemo } from "./AutofillDemo";
 import { ClipboardDemo } from "./ClipboardDemo";
 import { Tabnabbing } from "./Tabnabbing";
 import { FakeWindow } from "./FakeWindow";
+import { PhotoMetadata } from "./PhotoMetadata";
 import { useScreenShare } from "./useScreenShare";
 import { useCamera } from "./useCamera";
 import { Button, Card, Insight, Notice, Row, Rows, Section, Stat } from "./ui";
@@ -244,6 +245,7 @@ const COPY_EN = {
       ["Separate identities", "Use different browsers or containers for work, shopping and social media, so their profiles don't merge."],
       ["Clear cookies regularly", "Or set your browser to clear them on exit. It won't stop fingerprinting, but it resets ID cookies like _ga."],
       ["Be careful what you type", "Assume anything typed into a web form can be read before you hit submit."],
+      ["Strip photo metadata", "Turn off location tagging in your camera app, and remove location before sharing original files. Screenshots carry no GPS."],
     ] as [string, string][],
   },
 
@@ -468,6 +470,7 @@ const COPY_ID: Copy = {
       ["Pisahkan identitas", "Pakai browser atau container berbeda untuk kerja, belanja, dan media sosial, supaya profilnya tidak menyatu."],
       ["Hapus cookie secara berkala", "Atau atur browser untuk menghapusnya saat keluar. Ini tidak menghentikan fingerprinting, tapi mereset cookie ID seperti _ga."],
       ["Hati-hati dengan yang kamu ketik", "Anggap apa pun yang diketik ke formulir web bisa dibaca sebelum kamu menekan kirim."],
+      ["Hapus metadata foto", "Matikan penanda lokasi di aplikasi kamera, dan hapus lokasi sebelum membagikan file asli. Screenshot tidak membawa GPS."],
     ],
   },
 
@@ -898,9 +901,10 @@ export function WhoAmI() {
         <ClipboardDemo />
         <Tabnabbing />
         <FakeWindow />
+        <PhotoMetadata />
 
-        {/* 14 — The point */}
-        <Section id="combine" index="14" title={t.combine.title} lead={t.combine.lead}>
+        {/* 15 — The point */}
+        <Section id="combine" index="15" title={t.combine.title} lead={t.combine.lead}>
           <div className="grid gap-4 md:grid-cols-3">
             <Card title={t.combine.identifyTitle}>
               <p className="text-sm text-white/70 leading-relaxed">{t.combine.identifyBody}</p>
@@ -914,8 +918,8 @@ export function WhoAmI() {
           </div>
         </Section>
 
-        {/* 15 — Protect yourself */}
-        <Section id="protect" index="15" title={t.protect.title} lead={t.protect.lead}>
+        {/* 16 — Protect yourself */}
+        <Section id="protect" index="16" title={t.protect.title} lead={t.protect.lead}>
           <div className="grid gap-4 md:grid-cols-2">
             {t.protect.tips.map(([title, text]) => (
               <Card key={title} title={title}>

@@ -35,6 +35,7 @@ export interface EventMap {
       | "clipboard"
       | "tabnabbing"
       | "fake_window"
+      | "photo_metadata"
       | "typing_demo";
     demo_result: "success" | "error" | "granted" | "denied" | "started";
   };
