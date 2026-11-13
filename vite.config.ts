@@ -11,6 +11,7 @@ export default defineConfig({
         main: resolve(import.meta.dirname, 'index.html'),
         // Unlisted page, served at /whoami/
         whoami: resolve(import.meta.dirname, 'whoami/index.html'),
+        datatracking: resolve(import.meta.dirname, 'datatracking/index.html'),
       },
     },
   },

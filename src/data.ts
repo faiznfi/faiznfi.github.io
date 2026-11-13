@@ -10,6 +10,14 @@ export const projectsData: Project[] = [
     icon: "fingerprint",
   },
   {
+    id: "datatracking",
+    title: "Data Tracking, Done Right",
+    description: "The other side of Who Am I: an interactive guide to what anonymous, consented tracking does for a business, with calculators for retargeting, attribution, funnels, A/B tests and customer lifetime value, plus a starter tracking plan.",
+    link: "https://faiznfi.github.io/datatracking",
+    tags: ["Analytics", "Marketing", "Privacy"],
+    icon: "target",
+  },
+  {
     id: "followers-analysis",
     title: "Followers Analysis",
     description: "A client-side web application to quickly and securely analyze your Instagram followers, following, mutuals, fans, non-followers, recently unfollowed, blocked profiles, and pending requests.",

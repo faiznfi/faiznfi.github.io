@@ -39,6 +39,10 @@ export interface EventMap {
       | "typing_demo";
     demo_result: "success" | "error" | "granted" | "denied" | "started";
   };
+  /** /datatracking calculators. Only which tool was used is sent, never the numbers typed in. */
+  datatracking_tool: {
+    tool: "retargeting" | "attribution" | "funnel" | "ab_test" | "clv" | "hashing";
+  };
   web_vitals: {
     metric_name: string;
     metric_value: number;
