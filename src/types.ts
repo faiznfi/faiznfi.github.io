@@ -1,4 +1,4 @@
-export type ProjectIcon = "fingerprint" | "bar-chart" | "map-pin" | "sparkles";
+export type ProjectIcon = "fingerprint" | "target" | "bar-chart" | "map-pin" | "sparkles";
 
 export interface Project {
   id: string;
